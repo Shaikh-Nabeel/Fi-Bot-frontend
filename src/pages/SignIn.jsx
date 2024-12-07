@@ -7,11 +7,6 @@ function SignIn({ userData, setUserData}) {
 
   // const [userData, setUserData] = UseLocalStorage("userData", "");
 
-  useEffect(() => {
-    if (userData !== "") {
-        navigate('/chat');
-    }
-  }, [userData]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -19,8 +14,16 @@ function SignIn({ userData, setUserData}) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [isGuest,setIsGuest] = useState(false)
 
   const baseURL = "https://bot-backend-ruddy.vercel.app/api/"; // Replace with your actual API base URL
+  
+  useEffect(() => {
+    if (userData !== "") {
+        navigate('/chat');
+    }
+  }, [userData]);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,6 +58,20 @@ function SignIn({ userData, setUserData}) {
       setIsLoading(false); // Hide loader
     }
   };
+
+   
+  const handleGuest = (e) => {
+    e.preventDefault();
+    setFormData({email:"Guest@gmail.com",password:"12345678"})
+    setIsGuest(true);
+  };
+
+    useEffect(() => {
+    if (isGuest && formData) {
+      handleSubmit(new Event('submit'));
+      setIsGuest(false);
+    }
+  }, [isGuest, formData]);
 
   return (
     <div className="min-h-[calc(100vh-144px)] flex items-center justify-center py-12 px-4">
@@ -126,6 +143,10 @@ function SignIn({ userData, setUserData}) {
 
             <button type="submit" className="btn-primary w-full">
               Sign In
+            </button>
+            
+              <button type="submit" onClick={handleGuest} className="btn-primary w-full">
+              Guest Sign In
             </button>
 
             <p className="text-center text-sm text-gray-400">
